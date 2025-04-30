@@ -45,7 +45,8 @@ export default function Home() {
       >
         <div className="container flex items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold">EIDEOFY</span>
+            <span className="text-xl font-bold text-[#B22222]">EIDEOFY</span>
+
           </Link>
           <nav className="hidden md:flex gap-8">
             <Link href="#what-we-do" className="text-sm font-medium hover:text-muted-foreground transition-colors">
@@ -126,7 +127,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-4">EIDEOFY</h1>
+              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-4 text-[#B22222]">EIDEOFY</h1>
               <p className="text-xl md:text-2xl text-muted-foreground">A Popularity Zenith Dominion</p>
             </motion.div>
 
