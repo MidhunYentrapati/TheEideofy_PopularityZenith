@@ -127,7 +127,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               className="mb-12"
             >
-              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-4 text-[#B22222]">EIDEOFY</h1>
+              <h1 className="text-6xl md:text-8xl font-bold tracking-tighter mb-4 text-[#B22222]">eideofy</h1>
               <p className="text-xl md:text-2xl text-muted-foreground">A Popularity Zenith Dominion</p>
             </motion.div>
 
