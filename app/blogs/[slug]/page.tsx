@@ -1,14 +1,34 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Instagram, Youtube } from "lucide-react"
-import { getAllPosts } from "@/lib/queries"
+import { Instagram, Youtube, ArrowLeft } from "lucide-react"
+import { getPostBySlug, getAllPosts } from "@/lib/queries"
 import { urlFor } from "@/lib/sanity"
 import { formatDate } from "@/lib/utils"
+import { PortableText } from "@portabletext/react"
 
 export const revalidate = 60 // Revalidate this page every 60 seconds
 
-export default async function BlogsPage() {
+export async function generateStaticParams() {
   const posts = await getAllPosts()
+
+  return posts.map((post) => ({
+    slug: post.slug.current,
+  }))
+}
+
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug)
+
+  if (!post) {
+    return (
+      <div className="flex flex-col min-h-screen items-center justify-center">
+        <h1 className="text-2xl font-bold">Post not found</h1>
+        <Link href="/blogs" className="mt-4 text-blue-600 hover:underline">
+          Back to blogs
+        </Link>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-black">
@@ -37,56 +57,59 @@ export default async function BlogsPage() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Eideofy Blog</h1>
-                <p className="max-w-[900px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Insights, strategies, and trends in social media and digital growth.
-                </p>
+        <article className="container max-w-4xl px-4 py-12 md:py-20">
+          <Link href="/blogs" className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-8">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to all posts
+          </Link>
+
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6">{post.title}</h1>
+
+          <div className="flex items-center gap-4 mb-8">
+            {post.author.image && (
+              <div className="relative w-10 h-10 rounded-full overflow-hidden">
+                <Image
+                  src={urlFor(post.author.image).url() || "/placeholder.svg"}
+                  alt={post.author.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
-            </div>
-            <div className="mx-auto grid max-w-5xl gap-8 mt-12">
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {posts.length > 0 ? (
-                  posts.map((post) => (
-                    <Link href={`/blogs/${post.slug.current}`} key={post._id} className="group">
-                      <div className="flex flex-col space-y-3 border rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md">
-                        <div className="relative w-full aspect-video">
-                          {post.mainImage ? (
-                            <Image
-                              src={urlFor(post.mainImage).url() || "/placeholder.svg"}
-                              alt={post.title}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <Image
-                              src="/placeholder.svg?height=200&width=300"
-                              alt={post.title}
-                              fill
-                              className="object-cover"
-                            />
-                          )}
-                        </div>
-                        <div className="p-4 space-y-2">
-                          <p className="text-sm text-gray-500">{formatDate(post.publishedAt)}</p>
-                          <h3 className="font-bold group-hover:underline">{post.title}</h3>
-                          <p className="text-sm text-gray-600 line-clamp-3">{post.excerpt}</p>
-                        </div>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-10">
-                    <p className="text-gray-500">No blog posts found. Check back soon!</p>
-                  </div>
-                )}
-              </div>
+            )}
+            <div>
+              <p className="font-medium">{post.author.name}</p>
+              <p className="text-sm text-gray-500">{formatDate(post.publishedAt)}</p>
             </div>
           </div>
-        </section>
+
+          {post.mainImage && (
+            <div className="relative w-full aspect-video mb-10 rounded-lg overflow-hidden">
+              <Image
+                src={urlFor(post.mainImage).url() || "/placeholder.svg"}
+                alt={post.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+          )}
+
+          <div className="prose prose-lg max-w-none">
+            <PortableText value={post.body} />
+          </div>
+
+          {post.categories && post.categories.length > 0 && (
+            <div className="mt-10 pt-6 border-t">
+              <h3 className="text-lg font-semibold mb-3">Categories</h3>
+              <div className="flex flex-wrap gap-2">
+                {post.categories.map((category) => (
+                  <span key={category._id} className="px-3 py-1 bg-gray-100 text-gray-800 text-sm rounded-full">
+                    {category.title}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </article>
       </main>
       <footer className="border-t bg-black text-white">
         <div className="container flex flex-col gap-6 py-8 md:py-12 px-4 md:px-6">

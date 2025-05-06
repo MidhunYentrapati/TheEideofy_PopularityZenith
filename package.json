@@ -59,7 +59,16 @@
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
     "@emotion/is-prop-valid": "latest",
-    "framer-motion": "latest"
+    "sanity": "latest",
+    "@sanity/ui": "latest",
+    "@sanity/icons": "latest",
+    "@sanity/types": "latest",
+    "@sanity/client": "latest",
+    "styled-components": "latest",
+    "framer-motion": "latest",
+    "next-sanity": "latest",
+    "@sanity/image-url": "latest",
+    "@portabletext/react": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
